@@ -31,6 +31,7 @@ def graph_all_freqs(filename, total_freqs=10, start_freq=1000, freq_inc=100, ang
 
     # Starting point in dataframe
     index = 0
+    index_next = (360 // angle)
 
     # Isolate phi column and convert to radians
     theta = df.iloc[index:theta_max, [3]]
@@ -46,7 +47,7 @@ def graph_all_freqs(filename, total_freqs=10, start_freq=1000, freq_inc=100, ang
     ax = plt.subplot(111, projection='polar', autoscale_on=True)
     for x in range(0, total_freqs):
         ax.plot(phi, value, label=current_freq_string + ' MHz')
-        index += theta_max
+        index += index_next
         current_freq += freq_inc
         theta = df.iloc[index:index + theta_max, [3]]
         phi = theta['phi'] * np.pi / 180
@@ -79,10 +80,11 @@ def graph_one_freq(filename, req_freq=1000, start_freq=1000, freq_inc=100, angle
     df = df.sort_values(by=['freq', 'phi', 'theta'])
 
     # Define the number of rows per frequency
-    theta_max = 360 // angle - 1
+    theta_max = (360 // angle) - 1
 
     # Find the starting point in dataframe
-    index = ((req_freq - start_freq) // freq_inc) * theta_max
+    index_next = (360 // angle)
+    index = ((req_freq - start_freq) // freq_inc) * index_next
 
     # Isolate phi column and convert to radians
     theta = df.iloc[index:index + theta_max, [3]]
